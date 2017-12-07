@@ -122,12 +122,31 @@
       <section class="resume-section p-3 p-lg-5 d-flex flex-column" id="eda">
         <div class="my-auto">
           <h2 class="mb-5">Exploratory Data Analysis</h2>
-          <div class="resume-item d-flex flex-column mb-5">
+		  From our real life experience, the most important factors needed for recommendations are ratings given by user, average rating of a business, the number of reviews of a business and the number of reviews given by user. We also want to find the rating and number of review distribution given by state.
+		<br>
+		<br>
+		<br>
+		
+		<h4>Proposed Questions</h4>
+		<ol>
+		<li>
+		How many stars a business usually get? 
+		</li><li>
+		How many reviews a business usually get? </li><li>
+		How many reviews a user usually give? </li><li>
+		How does the reviews_count and star of a business related? </li><li>
+		what is the rating distribution given by state?</li><li>
+		what is the review distribution given by state?</li>
+		</ol>
+		<br><br>
+		<h4>Challenges</h4>
+		The challenge is that the dataset is very big, and there are many categories and attributes to sort out.
+		<br><br>        
+		<div class="resume-item d-flex flex-column mb-5">
 				<!--    
 					put the eda html
 				 -->      
-				How many stars a business usually get? 
-				<br>
+				<h6>How many stars a business usually get? </h6>
 				Answer: Most businesses have starts of 4 and 3.5. 
 				A small number of business has start that is under 1.5
 				 <p>
@@ -135,49 +154,46 @@
 				<img src="img/plot1.1.png" alt="">
 				</p>
 				</div>
-          <div class="resume-item d-flex flex-column flex-md-row mb-5">
-				<p>
-				How many reviews a business usually get?
-				<br>
+          <div class="resume-item d-flex flex-column mb-5">
+				<h6>How many reviews a business usually get?</h6>
+				
 				Answer: We can see most of the business have reviews that is less than 10, very few business have more than 300 reviews.
 				<br>
-				<img src="img/plot1.2.png" alt="">
-				</p></div>
-          <div class="resume-item d-flex flex-column flex-md-row mb-5">				
-				
 				<p>
-				How many reviews a user usually give?
-				<br>
+				<img src="img/plot1.2.png" alt="">
+				</p>
+				</div>
+          <div class="resume-item d-flex flex-column mb-5">					
+				<h6>How many reviews a user usually give?</h6>
 				Answer: We can see the majority of the user give less than 10 reviews to businesses
 				<br>
-				<img src="img/plot1.3.png" alt="">
+				<p><img src="img/plot1.3.png" alt="">
 				</p></div>
-          <div class="resume-item d-flex flex-column flex-md-row mb-5">				
-				<p>
-				How does the reviews_count and star of a business related?
-				<br>
+          <div class="resume-item d-flex flex-column mb-5">				
+				<h6>
+				How does the reviews_count and star of a business related?</h6>
 				Answer: Business that has more than 1000 reviews are most likey to get 2.5 to 4 stars.
 				<br>
-				<img src="img/plot2.1.png" alt=""></p>
+				<p><img src="img/plot2.1.png" alt=""></p>
 				<br/>
 			
 			</div>
           <div class="resume-item d-flex flex-column mb-5">
-				What's the star rating distribution by states?
-				<br>
+				<h6>What's the star rating distribution by states?</h6>
 				Answer: Most of the states have ratings between 4 to 5.
+				<br>
 				 <p>
 
 				<img src="img/plot2.2.png" alt="">
 				</p>
 				</div>
-          <div class="resume-item d-flex flex-column flex-md-row mb-5">
-				<p>
+          <div class="resume-item d-flex flex-column mb-5">
+				<h6>
 				What's the review count distribution by states?
-				<br>
+				</h6>
 				Answer: Arizona has the highest number of reviews.
-				
 				<br>
+				<p>
 				<img src="img/plot2.png" alt="">
 				</p></div>
 				

@@ -1,0 +1,216 @@
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Ensemble-using-Random-Forest">Ensemble using Random Forest<a class="anchor-link" href="#Ensemble-using-Random-Forest">&#182;</a></h4><p>A random forest is a meta estimator that fits a number of classifying decision trees on various sub-samples of the dataset and use averaging to improve the predictive accuracy and control over-fitting. The sub-sample size is always the same as the original input sample size but the samples are drawn with replacement.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.width&#39;</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">set_option</span><span class="p">(</span><span class="s1">&#39;display.max_columns&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="k">import</span> <span class="n">RandomForestRegressor</span>
+<span class="c1"># code from Adventures in scikit-learn&#39;s Random Forest by Gregory Saunders</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">product</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+
+<span class="kn">from</span> <span class="nn">IPython.display</span> <span class="k">import</span> <span class="o">*</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># load X_train, y_train and X_test, y_test</span>
+<span class="n">init_data</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">ensemble</span><span class="p">(</span><span class="n">Xtrain</span><span class="p">,</span> <span class="n">ytrain</span><span class="p">):</span>
+<span class="c1">#     n_estimators is the number of trees in the forest.</span>
+<span class="c1"># The number of features to consider when looking for the best split. </span>
+<span class="c1"># Here max_features is a percentage and int(max_features * n_features) features are considered at each split.</span>
+    <span class="n">param_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+        <span class="n">n_estimators</span> <span class="o">=</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span> <span class="mi">400</span><span class="p">],</span>
+        <span class="n">max_features</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="n">start_timer</span><span class="p">()</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">estimators</span><span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="n">param_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Creating RandomForestRegressor using following </span><span class="si">{n}</span><span class="s1"> estimators and </span><span class="si">{f}</span><span class="s1">% max features: &#39;</span><span class="p">)</span>
+        <span class="n">est</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span><span class="n">oob_score</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+                                    <span class="n">n_estimators</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">max_features</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">est</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Xtrain</span><span class="p">,</span> <span class="n">ytrain</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="n">params</span><span class="p">]</span> <span class="o">=</span> <span class="n">est</span><span class="o">.</span><span class="n">oob_score_</span>
+        <span class="n">estimators</span><span class="p">[</span><span class="n">params</span><span class="p">]</span> <span class="o">=</span> <span class="n">est</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+    <span class="n">outparams</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">get</span><span class="p">)</span>
+    <span class="n">stop_timer</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">outparams</span><span class="p">)</span>
+    
+    <span class="c1"># get the regressor corresponding to the outparams</span>
+    <span class="n">rf1</span> <span class="o">=</span> <span class="n">estimators</span><span class="p">[</span><span class="n">outparams</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">rf1</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Run the random forest regression on the train and test dataset</span>
+<span class="n">rf1</span> <span class="o">=</span> <span class="n">ensemble</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Compute the R squared on training and test datasets</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Train R-squared using RandomForestRegression is:&#39;</span><span class="p">,</span> <span class="n">rf1</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Test R-squared using RandomForestRegression is:&#39;</span><span class="p">,</span> <span class="n">rf1</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Show Top-25 most important features</span>
+<span class="n">features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Xtrain</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">set_context</span><span class="p">(</span><span class="s2">&quot;poster&quot;</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">rf1</span><span class="o">.</span><span class="n">feature_importances_</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">features</span><span class="p">)</span><span class="o">.</span><span class="n">nlargest</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">25</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s2">&quot;barh&quot;</span><span class="p">)</span> 
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Predict the rating using the random forest regressor:</span>
+<span class="n">rf1</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="EDA-and-revised-project-statement">EDA and revised project statement<a class="anchor-link" href="#EDA-and-revised-project-statement">&#182;</a></h3><h4 id="1.-Description-of-the-data">1. Description of the data<a class="anchor-link" href="#1.-Description-of-the-data">&#182;</a></h4><p>3 of the 6 yelp datasets that we are interested are consist of records:<br>
+Reviews - <b>42 632 073</b> Businesses - <b>2 349 585</b> Users - <b>2 6033 964</b><br></p>
+<p>After finding a way to read data into dataframe (we couldn't load it by regular way), we observed data columns and corresponding types:</p>
+<p><img src="img/datashape_and_columns.png" alt=""></p>
+<h4 id="2.-Visualizations-and-captions-that-summarize-the-noteworthy-findings-of-the-EDA">2. Visualizations and captions that summarize the noteworthy findings of the EDA<a class="anchor-link" href="#2.-Visualizations-and-captions-that-summarize-the-noteworthy-findings-of-the-EDA">&#182;</a></h4><p>After reading description of every field, we embarked on EDA to explore data relationship. Some of the questions we had ansewered are including but not limited by:</p>
+<ol>
+<li>How many stars a business usually get? -> Most businesses have starts of 4 and 3.5. A small number of business has start that is under 1.5</li>
+<li>How many reviews a business usually get? -> We can see most of the business have reviews that is less than 10, very few business have more than 300 reviews.</li>
+<li>How many reviews a user usually give? -> We can see the majority of the user give less than 10 reviews to businesses</li>
+<li>How does the reviews_count and star of a business related? -> Business that has more than 1000 reviews are most likey to get 2.5 to 4 stars.</li>
+<li>Is there a relationship between review_count and stars? -> It seems like businesses with higher review count most likely to have 4 star rating</li>
+</ol><p><img src="img/plot1.png" alt="">
+<img src="img/plot2.png" alt=""></p>
+<p>Running EDA on entire data set seemed to be a problem due to somewhat large datasets. On our fastest laptop - we could wait over 15 mins for one plot to finish. Hence, we cleaned business dataset by filtering out all businesses that are <b>closed</b>. While they can provide some interest to us, we believe that size of the population isn't a problem given the initial data size (<code>42.6</code> m). In addition, we had filtered out businesses that don't have <code>Restaurant</code> in their <u>categories</u>, since based on our project goal we are focusing just on restaurant businesses. Hence, we ended up with <code>579855</code> records which is <code>1.36%</code> from our initial input for bussiness.</p>
+<p>After that we have build a data frame by joining reviews with business through <code>business_id</code> (left outter join) result was then joined with user data frame by <code>user_id</code> (also left outter join). Be we joined 3 data frames, we renamed columns to be prefixed with original dataframe name. This was done to avoid confusion betwen review rating and business rating. After merged we ended up with 44 columns. Not all of those columns will be used in training data set.</p>
+<p>For the next (and final) milestone we are looking for building 4 models (baseline, regularized regression (Ridge), matrix factorization and either RF or ADABoost) to predict start rating for a given restaurant. We will build a simple static web page to summarize our project findings and hopefully we will have enough time to build a little demo.</p>
+<h4 id="3.-Revised-project-question-based-on-the-insights-from-EDA">3. Revised project question based on the insights from EDA<a class="anchor-link" href="#3.-Revised-project-question-based-on-the-insights-from-EDA">&#182;</a></h4><p>After close looking at EDAs, we have decided to stick to our original question which should be formed as:</p>
+<h3 id="For-a-given-user,-can-we-predict-star-rating-that-user-will-give-corresponding-restaurant?">For a given user, can we predict star rating that user will give corresponding restaurant?<a class="anchor-link" href="#For-a-given-user,-can-we-predict-star-rating-that-user-will-give-corresponding-restaurant?">&#182;</a></h3><p>Knowing this information would be very usefull to provide all sorts of recomendations for a registered user. Our goal would be to mimic existing yelp where a registered user looks for restaurant recomendations within a certain area (zip code). Yelp, isn't just listing all places filtered by highest ratings, distance or number of reviews. Instead it applies its trained model to find places (excluding paid accounts that are boosted to the top), which most likely will receive good rating and review if a given user would visit it.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span> 
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+    </div>
+  </div>

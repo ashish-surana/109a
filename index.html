@@ -1907,6 +1907,22 @@ B1COUobBjZNzAAAAAElFTkSuQmCC
           <div class="resume-item d-flex flex-column mb-5">
 		<div id="summary_html"></div>
 		<p>
+		<h3>Data</h3>
+		3 of the 6 yelp datasets that we are interested are consist of records:
+<ul>
+	<li>	Reviews - 42,632,073 </li>
+<li>Businesses - 2,349,585 </li>
+<li>Users - 2,6033,964</li>
+</ul>
+
+Running EDA on entire data set seemed to be a problem due to somewhat large datasets. On our fastest laptop - we could wait over 15 mins for one plot to finish. Hence, we cleaned business dataset by filtering out all businesses that are closed. While they can provide some interest to us, we believe that size of the population isn't a problem given the initial data size (42.6 m). 
+<br><br>
+In addition, we had filtered out businesses that don't have Restaurant in their categories, since based on our project goal we are focusing just on restaurant businesses. Hence, we ended up with 579,855 records which is 1.36% from our initial input for bussiness.
+<br><br>
+After that we have build a data frame by joining reviews with business through business_id (left outer join) result was then joined with user data frame by user_id (also left outer join). Before we joined 3 data frames, we renamed columns to be prefixed with original dataframe name. This was done to avoid confusion betwen review rating and business rating. After merge we ended up with 44 columns. Not all of those columns will be used in training data set.
+<br><br>
+For the next step, we built 4 models (baseline, regularized regression using Ridge and Lasso, matrix factorization and Random Forrest) to predict star rating for a given restaurant.
+<br><br><br>
 		<h3>Best model</h3>
 		<p>
 		Here is the comparison of train and test R<sup>2</sup> for all the models.
@@ -1943,8 +1959,8 @@ B1COUobBjZNzAAAAAElFTkSuQmCC
 			</tr>
 			<tr>
 				<td>Ensemble</td>
-				<td>0.9018</td>
-				<td>0.3162</td>
+				<td>0.9073</td>
+				<td>0.3280</td>
 			</tr>			
 		</table>
 		<br>

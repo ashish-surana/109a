@@ -22,8 +22,255 @@
 
     <!-- Custom styles for this template -->
     <link href="css/resume.min.css" rel="stylesheet">
+	<style type="text/css">
+/* input_area and input_prompt must match in top border and margin for alignment */
+div.input_area {
+  border: 1px solid #cfcfcf;
+  border-radius: 2px;
+  background: #f7f7f7;
+  line-height: 1.21429em;
+}
 
+div.input_area > div.highlight {
+  margin: 0.4em;
+  border: none;
+  padding: 0px;
+  background-color: transparent;
+}
 
+</style>
+<style type="text/css">
+div.output_wrapper {
+  /* this position must be relative to enable descendents to be absolute within it */
+  position: relative;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  z-index: 1;
+}
+/* class for the output area when it should be height-limited */
+div.output_scroll {
+  /* ideally, this would be max-height, but FF barfs all over that */
+  height: 24em;
+  /* FF needs this *and the wrapper* to specify full width, or it will shrinkwrap */
+  width: 100%;
+  overflow: auto;
+  border-radius: 2px;
+  -webkit-box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+  display: block;
+}
+/* output div while it is collapsed */
+div.output_collapsed {
+  margin: 0px;
+  padding: 0px;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+div.out_prompt_overlay {
+  height: 100%;
+  padding: 0px 0.4em;
+  position: absolute;
+  border-radius: 2px;
+}
+div.out_prompt_overlay:hover {
+  /* use inner shadow to get border that is computed the same on WebKit/FF */
+  -webkit-box-shadow: inset 0 0 1px #000;
+  box-shadow: inset 0 0 1px #000;
+  background: rgba(240, 240, 240, 0.5);
+}
+div.output_prompt {
+  color: #D84315;
+}
+/* This class is the outer container of all output sections. */
+div.output_area {
+  padding: 0px;
+  page-break-inside: avoid;
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: horizontal;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+div.output_area .MathJax_Display {
+  text-align: left !important;
+}
+div.output_area .rendered_html table {
+  margin-left: 0;
+  margin-right: 0;
+}
+div.output_area .rendered_html img {
+  margin-left: 0;
+  margin-right: 0;
+}
+div.output_area img,
+div.output_area svg {
+  max-width: 100%;
+  height: auto;
+}
+div.output_area img.unconfined,
+div.output_area svg.unconfined {
+  max-width: none;
+}
+/* This is needed to protect the pre formating from global settings such
+   as that of bootstrap */
+.output {
+  /* Old browsers */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-box-align: stretch;
+  display: -moz-box;
+  -moz-box-orient: vertical;
+  -moz-box-align: stretch;
+  display: box;
+  box-orient: vertical;
+  box-align: stretch;
+  /* Modern browsers */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+/* This class is for the output subarea inside the output_area and after
+   the prompt div. */
+div.output_subarea {
+  overflow-x: auto;
+  padding: 0.4em;
+  /* Old browsers */
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1;
+  box-flex: 1;
+  /* Modern browsers */
+  flex: 1;
+  max-width: calc(100% - 14ex);
+}
+div.output_scroll div.output_subarea {
+  overflow-x: visible;
+}
+/* The rest of the output_* classes are for special styling of the different
+   output types */
+/* all text output has this class: */
+div.output_text {
+  text-align: left;
+  color: #000;
+  /* This has to match that of the the CodeMirror class line-height below */
+  line-height: 1.21429em;
+}
+/* stdout/stderr are 'text' as well as 'stream', but execute_result/error are *not* streams */
+div.output_stderr {
+  background: #fdd;
+  /* very light red background for stderr */
+}
+div.output_latex {
+  text-align: left;
+}
+/* Empty output_javascript divs should have no height */
+div.output_javascript:empty {
+  padding: 0;
+}
+</style>
+<style type="text/css">
+    .highlight .hll { background-color: #ffffcc }
+.highlight  { background: #f8f8f8; }
+.highlight .c { color: #408080; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
+.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #FF0000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888888 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #7D9029 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #A0A000 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #0000FF } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+</style>
   </head>
 
   <body id="page-top">
@@ -204,14 +451,6 @@
       <section class="resume-section p-3 p-lg-5 d-flex flex-column" id="baseline">
         <div class="my-auto">
           <h2 class="mb-5">Baseline</h2>
-          <div class="resume-item d-flex flex-column flex-md-row mb-5">
-<!-- 		
-    put the baselin html
- -->        
-
-
-</div>
-  
 <div class="cell border-box-sizing text_cell rendered">
 
 <div class="inner_cell">
@@ -228,6 +467,7 @@
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># The baseline rating is the mean over all user-business ratings</span>
+<code>
 <span class="n">baseline_rating</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">review_df</span><span class="p">[</span><span class="s1">&#39;review_stars&#39;</span><span class="p">])</span>
 
 <span class="n">x_train</span> <span class="o">=</span> <span class="n">train_df</span><span class="p">[[</span><span class="s1">&#39;business_stars&#39;</span><span class="p">,</span> <span class="s1">&#39;average_stars&#39;</span><span class="p">]]</span>
@@ -239,7 +479,10 @@
 <span class="n">y_test</span> <span class="o">=</span> <span class="n">test_df</span><span class="p">[</span><span class="s1">&#39;review_stars&#39;</span><span class="p">]</span>
 </pre></div>
 
+</code>
 </div>
+
+
 </div>
 </div>
 
@@ -298,8 +541,6 @@ R2 score for test data 0.357687535547
 <li>Review_count in business.json</li>
 <li>Review_count in user.json</li>
 </ul>
-<p>However, the R2 score of 0.3498 is not improved compare to the most basic basline</p>
-
 </div>
 </div>
 </div>
@@ -338,6 +579,7 @@ R2 score for test data 0.357687535547
 <pre>R2 score for train data 0.348456750565
 R2 score for test data 0.349707314506
 </pre>
+<p>However, the R2 score of 0.3498 is not improved compare to the most basic basline</p>
 </div>
 </div>
 
@@ -385,7 +627,202 @@ R2 score for test data 0.349707314506
 <!--    
     put the matrix html
  -->              </div>
-	</div>
+ 
+Matrix Factorization aims to capture the latent factors. We will use Singular Value Decomposition (SVD) to create the matrices. Using SVD, we can create following three matrices:
+<ol>
+	<li>How much a user liked various features of the restaurant?</li>
+	<li>Which features were offered by each restaurant?</li>
+	<li>A weight matrix that relates the two matrices above</li>
+</ol>
+<br>
+We then limit our analysis to top-50 features.
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[73]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">recommend_business</span><span class="p">(</span><span class="n">predictions_df</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">business_df</span><span class="p">,</span> <span class="n">original_ratings_df</span><span class="p">,</span> <span class="n">num_recommendations</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">sorted_user_predictions</span> <span class="o">=</span> <span class="n">predictions_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">user_id</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">recommendations</span> <span class="o">=</span> <span class="p">(</span><span class="n">business_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sorted_user_predictions</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(),</span> <span class="n">how</span> <span class="o">=</span> <span class="s1">&#39;left&#39;</span><span class="p">,</span>
+               <span class="n">left_on</span> <span class="o">=</span> <span class="s1">&#39;business_id&#39;</span><span class="p">,</span>
+               <span class="n">right_on</span> <span class="o">=</span> <span class="s1">&#39;business_id&#39;</span><span class="p">)</span><span class="o">.</span>
+         <span class="n">rename</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="p">{</span><span class="n">user_id</span><span class="p">:</span> <span class="s1">&#39;Predictions&#39;</span><span class="p">})</span><span class="o">.</span>
+        <span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Predictions&#39;</span><span class="p">,</span> <span class="n">ascending</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span><span class="o">.</span>
+                       <span class="n">iloc</span><span class="p">[:</span><span class="n">num_recommendations</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">recommendations</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[80]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Make 10 recommendations for user &#39;048mif2uzPN800T90sAmyw&#39;</span>
+<span class="n">predictions</span> <span class="o">=</span> <span class="n">recommend_business</span><span class="p">(</span><span class="n">preds_df</span><span class="p">,</span> <span class="s1">&#39;048mif2uzPN800T90sAmyw&#39;</span><span class="p">,</span> <span class="n">business_df</span><span class="p">,</span> <span class="n">review_df</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">predictions</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[80]:</div>
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>address</th>
+      <th>attributes</th>
+      <th>business_id</th>
+      <th>categories</th>
+      <th>city</th>
+      <th>hours</th>
+      <th>is_open</th>
+      <th>latitude</th>
+      <th>longitude</th>
+      <th>business_name</th>
+      <th>neighborhood</th>
+      <th>postal_code</th>
+      <th>business_review_count</th>
+      <th>business_stars</th>
+      <th>state</th>
+      <th>Predictions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>44722</th>
+      <td>201 N 3rd St</td>
+      <td>{'RestaurantsTableService': True, 'GoodForMeal...</td>
+      <td>3GEEy7RP6e4bT4LAiWFMFQ</td>
+      <td>[Restaurants, Pizza]</td>
+      <td>Las Vegas</td>
+      <td>{'Monday': '11:00-0:00', 'Tuesday': '11:00-0:0...</td>
+      <td>1</td>
+      <td>36.171618</td>
+      <td>-115.142267</td>
+      <td>Pizza Rock</td>
+      <td>Downtown</td>
+      <td>89101</td>
+      <td>1610</td>
+      <td>4.0</td>
+      <td>NV</td>
+      <td>1.415647</td>
+    </tr>
+    <tr>
+      <th>23045</th>
+      <td>10940 S Eastern Ave</td>
+      <td>{'BusinessAcceptsCreditCards': True, 'Business...</td>
+      <td>83oD63tLo-9c2BdKdYlBtg</td>
+      <td>[Electricians, Home Services]</td>
+      <td>Henderson</td>
+      <td>{'Monday': '8:00-20:00', 'Tuesday': '8:00-20:0...</td>
+      <td>1</td>
+      <td>35.993803</td>
+      <td>-115.100847</td>
+      <td>New Venture Henderson Electrical</td>
+      <td>Anthem</td>
+      <td>89052</td>
+      <td>77</td>
+      <td>5.0</td>
+      <td>NV</td>
+      <td>0.728586</td>
+    </tr>
+    <tr>
+      <th>302</th>
+      <td>3501 S Rainbow</td>
+      <td>{'Alcohol': 'full_bar', 'HasTV': True, 'NoiseL...</td>
+      <td>W-3Sy3fy85mQdd0ZNFKIiw</td>
+      <td>[Sports Bars, Nightlife, Burgers, Bars, Americ...</td>
+      <td>Las Vegas</td>
+      <td>{'Monday': '11:00-0:00', 'Tuesday': '11:00-0:0...</td>
+      <td>1</td>
+      <td>36.125270</td>
+      <td>-115.243588</td>
+      <td>Applebee's</td>
+      <td>Chinatown</td>
+      <td>89103</td>
+      <td>74</td>
+      <td>2.5</td>
+      <td>NV</td>
+      <td>0.507340</td>
+    </tr>
+    <tr>
+      <th>1477</th>
+      <td>4480 Paradise Rd</td>
+      <td>{'RestaurantsTableService': True, 'GoodForMeal...</td>
+      <td>hihud--QRriCYZw1zZvW4g</td>
+      <td>[Restaurants, Barbeque, Asian Fusion, Japanese...</td>
+      <td>Las Vegas</td>
+      <td>{'Monday': '11:30-1:00', 'Tuesday': '11:30-1:0...</td>
+      <td>1</td>
+      <td>36.108898</td>
+      <td>-115.151261</td>
+      <td>Gangnam Asian BBQ Dining</td>
+      <td>Eastside</td>
+      <td>89169</td>
+      <td>3180</td>
+      <td>4.5</td>
+      <td>NV</td>
+      <td>0.471202</td>
+    </tr>
+    <tr>
+      <th>34153</th>
+      <td>3415 W Thunderbird Rd</td>
+      <td>{'BusinessAcceptsCreditCards': True, 'Restaura...</td>
+      <td>QynDxN7P_yOXzViCnmn4Dg</td>
+      <td>[Local Services, Shopping, Jewelry, Jewelry Re...</td>
+      <td>Phoenix</td>
+      <td>{'Monday': '0:00-0:00', 'Tuesday': '0:00-0:00'...</td>
+      <td>1</td>
+      <td>33.609327</td>
+      <td>-112.131494</td>
+      <td>Kenz Jewelers</td>
+      <td></td>
+      <td>85053</td>
+      <td>11</td>
+      <td>5.0</td>
+      <td>AZ</td>
+      <td>0.465522</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
       </section>
 
       <section class="resume-section p-3 p-lg-5 d-flex flex-column" id="ensemble">
